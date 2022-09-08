@@ -1,15 +1,14 @@
 import cv2
+import numpy as np
 
 class Image:
     def __init__(self, img_path, bboxes):
         self.img = cv2.imread(img_path)
-        self.bboxes = self.get_xyxy(bboxes)
+        self.bboxes = bboxes
+        self.bbox_count = len(bboxes)
+
         self.middle = self.get_mid_point()
-        
-        self.x_min = bboxes[0]
-        self.y_min = bboxes[1]
-        self.width = bboxes[2]
-        self.height = bboxes[3]
+        self.bboxes_xyxy = self.get_xyxy()
 
     def show_image(self):
         for bbox in self.bboxes:
@@ -20,8 +19,8 @@ class Image:
 
     def get_xyxy(self, xywh):
         xyxy = []
-        if xywh != []:
-            for bbox in xywh:
+        if self.bboxes != []:
+            for bbox in self.bboxes:
                 x_min = bbox[0]
                 y_min = bbox[1]
                 x_max = bbox[0] + bbox[2]
@@ -31,11 +30,26 @@ class Image:
         return xyxy
 
     def get_mid_point(self):
-        x_mid = self.bboxes[0] + self.bboxes[2] // 2
-        y_mid = self.bboxes[1] + self.bboxes[3] // 2
+        mid = []
+        if self.bboxes != []:
+            for bbox in self.bboxes_xyxy:
+                x_mid = bbox[0] + bbox[2] // 2
+                y_mid = bbox[1] + bbox[3] // 2
+                mid.append((x_mid, y_mid))
 
-        return (x_mid, y_mid)
+            return mid
 
     def get_bgr_histogram(self):
-        hist_x_min = self.x_min + 0.1 * self.width
-        hist.x_max = self.x_min + 0.9 * self.width
+        if self.bboxes != []:
+            for bbox in self.bboxes:
+                hist_x_min = int(bbox[0] + bbox[2]*0.1)
+                hist_x_max = int(bbox[0] + bbox[2]*0.9)
+                hist_y_min = bbox[0]
+                hist_y_max = bbox[0] + bbox[3]
+
+                hist_bbox = self.img[hist_x_min:hist_x_max][hist_y_min:hist_y_max]
+                cv2.imshow('histogram', hist_bbox)
+                cv2.waitKey()
+
+
+
