@@ -1,14 +1,17 @@
+from tokenize import String
 from turtle import back
+from typing import List
 import cv2
 import numpy as np
 
 class Image:
-    def __init__(self, img_path, bboxes):
+    def __init__(self, img_path: String, bboxes: List):
         self.img = cv2.imread(img_path)
         self.bboxes = bboxes
         self.bbox_count = len(bboxes)
         self.bboxes_xyxy = self.get_xyxy()
         self.middle = self.get_mid_point()
+        self.upper_hists = self.get_upper_histograms()
 
     def show_image(self):
         for bbox in self.bboxes_xyxy:
@@ -30,8 +33,8 @@ class Image:
         return xyxy
 
     def get_mid_point(self):
-        mid = []
         if self.bboxes != []:
+            mid = []
             for bbox in self.bboxes_xyxy:
                 x_mid = bbox[0] + bbox[2] // 2
                 y_mid = bbox[1] + bbox[3] // 2
@@ -39,15 +42,20 @@ class Image:
 
             return mid
 
-    def get_upper_histogram(self):
+    def get_upper_histograms(self):
         if self.bboxes != []:
-            background = np.zeros((self.img.shape[0], self.img.shape[1], 3), dtype=np.uint8)
+            hists = []
+            # background = np.zeros((self.img.shape[0], self.img.shape[1], 3), dtype=np.uint8)
             for bbox in self.bboxes:
                 hist_x_min = bbox[0] + int(bbox[2]*0.1)
                 hist_x_max = bbox[0] + int(bbox[2]*0.9)
                 hist_y_min = bbox[1]
-                hist_y_max = bbox[1] + bbox[3]
-                background[hist_y_min:hist_y_max//2, hist_x_min:hist_x_max] = self.img[hist_y_min:hist_y_max//2, hist_x_min:hist_x_max]
+                hist_y_max = bbox[1] + bbox[3] // 2
+                # background[hist_y_min:hist_y_max, hist_x_min:hist_x_max] = self.img[hist_y_min:hist_y_max, hist_x_min:hist_x_max]
+                hists.append(self.img[hist_y_min:hist_y_max, hist_x_min:hist_x_max])
             
             # cv2.imshow('histogram', background)
             # cv2.waitKey()
+            return hists
+        else:
+            pass
