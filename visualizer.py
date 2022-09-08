@@ -35,3 +35,4 @@ if __name__ == '__main__':
     
     for image in images:
         image.show_image()
+        image.get_upper_histogram()
