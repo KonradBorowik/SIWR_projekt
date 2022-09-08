@@ -15,17 +15,3 @@ def calc_dist(prev: Image, next: Image) -> List:
         dists.append(dist)
 
     return dists
-
-
-def get_distances():
-    images = get_images()
-    distances = []
-    for i, image in enumerate(images):
-        if i < len(images) -1:
-            distances.append(calc_dist(image, images[i+1]))
-    
-    return distances
-
-if __name__ == '__main__':
-    distances = get_distances()
-    print(distances)

@@ -29,10 +29,3 @@ def get_images() -> List[Image]:
                 bboxes = []
 
     return images
-
-
-# if __name__ == '__main__':
-#     images = get_images()
-    
-#     for image in images:
-#         image.show_image()

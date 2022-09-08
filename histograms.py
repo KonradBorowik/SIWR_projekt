@@ -17,11 +17,3 @@ def compare_histograms(prev: Image, next: Image) -> List:
         hists_similarity.append(hist_similarity)
     
     return hists_similarity
-
-if __name__ == '__main__':
-    images = get_images()
-    hists = []
-    for i, image in enumerate(images):
-        if i < len(images) -1:
-            hists.append(compare_histograms(image, images[i+1]))
-    print(hists)
