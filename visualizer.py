@@ -1,8 +1,9 @@
 import os
+from typing import List
 from image import Image
 
 
-def get_bboxes():
+def get_images() -> List[Image]:
     with open('c6s1/bboxes.txt', 'r') as txt_file:
         bboxes_count = -1
         image_read = False
@@ -30,8 +31,8 @@ def get_bboxes():
     return images
 
 
-if __name__ == '__main__':
-    images = get_bboxes()
+# if __name__ == '__main__':
+#     images = get_images()
     
-    for image in images:
-        image.show_image()
+#     for image in images:
+#         image.show_image()

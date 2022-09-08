@@ -1,11 +1,10 @@
 from tokenize import String
-from turtle import back
 from typing import List
 import cv2
 import numpy as np
 
 class Image:
-    def __init__(self, img_path: String, bboxes: List):
+    def __init__(self, img_path: String, bboxes: List) -> None:
         self.img = cv2.imread(img_path)
         self.bboxes = bboxes
         self.bbox_count = len(bboxes)
@@ -13,14 +12,14 @@ class Image:
         self.middle = self.get_mid_point()
         self.upper_hists = self.get_upper_histograms()
 
-    def show_image(self):
+    def show_image(self) -> None:
         for bbox in self.bboxes_xyxy:
             x_min, y_min, x_max, y_max = bbox
             cv2.rectangle(self.img, (x_min, y_min), (x_max, y_max), (0, 255, 0), 5)
         cv2.imshow('window', self.img)
         cv2.waitKey()
 
-    def get_xyxy(self):
+    def get_xyxy(self) -> List:
         xyxy = []
         if self.bboxes != []:
             for bbox in self.bboxes:
@@ -32,7 +31,7 @@ class Image:
                 xyxy.append([x_min, y_min, x_max, y_max])
         return xyxy
 
-    def get_mid_point(self):
+    def get_mid_point(self) -> List:
         if self.bboxes != []:
             mid = []
             for bbox in self.bboxes_xyxy:
@@ -42,7 +41,7 @@ class Image:
 
             return mid
 
-    def get_upper_histograms(self):
+    def get_upper_histograms(self) -> List:
         if self.bboxes != []:
             hists = []
             # background = np.zeros((self.img.shape[0], self.img.shape[1], 3), dtype=np.uint8)
