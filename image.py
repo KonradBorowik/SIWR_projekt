@@ -1,3 +1,4 @@
+from itertools import accumulate
 from tokenize import String
 from typing import List
 import cv2
@@ -51,7 +52,9 @@ class Image:
                 hist_y_min = bbox[1]
                 hist_y_max = bbox[1] + bbox[3] // 2
                 # background[hist_y_min:hist_y_max, hist_x_min:hist_x_max] = self.img[hist_y_min:hist_y_max, hist_x_min:hist_x_max]
-                hists.append(self.img[hist_y_min:hist_y_max, hist_x_min:hist_x_max])
+                img_hsv = cv2.cvtColor(self.img, cv2.COLOR_BGR2HSV)
+                hist = cv2.calcHist(img_hsv[hist_y_min:hist_y_max, hist_x_min:hist_x_max], [0], mask=None, histSize=[256], ranges=(0, 256))
+                hists.append(hist)
             
             # cv2.imshow('histogram', background)
             # cv2.waitKey()
