@@ -4,14 +4,14 @@ from image import Image
 
 
 def get_images() -> List[Image]:
-    with open('c6s1/bboxes.txt', 'r') as txt_file:
+    with open('dataset/bboxes.txt', 'r') as txt_file:
         bboxes_count = -1
         image_read = False
         bboxes = []
         images = []
         for line in txt_file.readlines():
             if line.rstrip().endswith('.jpg'):
-                img_path = os.path.join('c6s1/frames', line.rstrip())
+                img_path = os.path.join('dataset/frames', line.rstrip())
                 bboxes_count = -1
                 image_read = True
             elif len(line.strip()) == 1:
