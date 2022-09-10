@@ -24,16 +24,12 @@ def f_b(prev_bbox_count: int, next_bbox_count: int):
 
 
 def f_u(hists: List, distances: List):
-    matrices = [[0.55]]
-    prob = []
+    matrices = [[-1, 0.55]]
     for i_ob, object in enumerate(hists):
         print(f'object {i_ob}: {object}')
-        mean = []
         for i_bb, hist in enumerate(object):
             print(f'hist {i_bb}: {hist}')
-            mean.append((hist * 5 + distances[i_ob][i_bb] * 10) / (5 + 10))
-            
-        matrices.append(mean)
+            matrices.append([i_bb, (hist * 5 + distances[i_ob][i_bb] * 10) / (5 + 10)])
     
     print(f'f_u: {matrices}')
     return matrices
