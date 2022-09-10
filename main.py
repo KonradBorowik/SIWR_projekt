@@ -11,5 +11,9 @@ if __name__ == '__main__':
     distances = []
     for i, image in enumerate(images):
         if i < len(images) -1:
+            if image.bbox_count == 0 or images[i+1].bbox_count == 0:
+                print("empty")
+                continue
+            
             hists.append(compare_histograms(image, images[i+1]))
             distances.append(calc_dist(image, images[i+1]))
