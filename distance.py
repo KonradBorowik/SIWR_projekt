@@ -11,7 +11,7 @@ def calc_dist(prev: Image, next: Image) -> List:
     for prev_mid in prev_mids:
         dist = []
         for next_mid in next_mids:
-            dist.append(sqrt(abs(prev_mid[0] - next_mid[0])**2 + abs(prev_mid[1] - next_mid[1])**2))
+            dist.append(sqrt((abs(prev_mid[0] - next_mid[0]) / prev.img.shape[1] **2) + abs(prev_mid[1] - next_mid[1]) / prev.img.shape[0] **2))
         
         dists.append(dist)
 
