@@ -19,10 +19,12 @@ def f_b(prev_bbox_count: int, next_bbox_count: int):
         
         matrix.append(row)
 
-    print(matrix)
+    print(f'f_b: {matrix}')
+    return matrix
 
 
-def calc_factor(hists: List, distances: List):# f_u ?
+def f_u(hists: List, distances: List):
+    matrices = [[0.55]]
     prob = []
     for i_ob, object in enumerate(hists):
         print(f'object {i_ob}: {object}')
@@ -30,10 +32,11 @@ def calc_factor(hists: List, distances: List):# f_u ?
         for i_bb, hist in enumerate(object):
             print(f'hist {i_bb}: {hist}')
             mean.append((hist * 5 + distances[i_ob][i_bb] * 10) / (5 + 10))
-            print(mean)
             
-        prob.append(min(mean)) 
-    print(prob)
+        matrices.append(mean)
+    
+    print(f'f_u: {matrices}')
+    return matrices
 
 
 if __name__ == '__main__':
@@ -50,9 +53,10 @@ if __name__ == '__main__':
             hists = compare_histograms(image, images[i+1])
             distances = calc_dist(image, images[i+1])
 
-            calc_factor(hists, distances)
 
-            f_b(image.bbox_count, images[i+1].bbox_count)
+            matrix_f_b = f_b(image.bbox_count, images[i+1].bbox_count)
 
+            matrices_f_u = f_u(hists, distances)
+            
             if i == 5:
                 break
