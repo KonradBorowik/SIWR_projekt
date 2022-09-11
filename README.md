@@ -5,4 +5,4 @@ Do porównania bboxów wykorzystuję porównanie histogramów zwężonych górny
 Kolejnym krokiem jest utworzenie funkcji f_b dla połączeń w grafie pomiędzy obiektami (f_b ogranicza możliwość wystąpienia sytuacji, w której dwa obiekty zostaną sklasyfikowane jako ten sam obiekt z poprzedniego zdjęcia) oraz f_u, w których zawarte są informacje o prawdopodobieństwie, że dany obiekt odpowiada, któremuś z obiektów z poprzedniego zdjęcia.
 Te macierze podawane są do create_graph(), w którym tworzę graf. Najpierw tworzę połączenia obiekt->f_u, później obiekt->f_b->obiekt. Ostatecznie wyniki otrzymuję po utworzeniu BeliefPropagation na podstawie utworzonego grafu.
 
-![graf](https://user-images.githubusercontent.com/28296861/189551013-ea50ec0d-93a2-4c36-85a2-09a7e74a2057.jpg)
+![graf (2)](https://user-images.githubusercontent.com/28296861/189551174-71273d46-f04a-4577-a965-4ee6c2aff501.jpg)
