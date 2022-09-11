@@ -3,19 +3,22 @@ from typing import List
 from image import Image
 
 
-def get_images() -> List[Image]:
-    with open('dataset/bboxes.txt', 'r') as txt_file:
+def get_images(dir) -> List[Image]:
+    with open(dir, 'r') as txt_file:
         bboxes_count = -1
         image_read = False
         bboxes = []
         images = []
+        bboxes_exist = False
         for line in txt_file.readlines():
             if line.rstrip().endswith('.jpg'):
                 img_path = os.path.join('dataset/frames', line.rstrip())
                 bboxes_count = -1
                 image_read = True
             elif len(line.strip()) == 1:
-                bboxes_count = int(line)
+                if line.strip() != 0:
+
+                    bboxes_count = int(line)
             else:
                 bboxes_count -= 1
                 bbox = []

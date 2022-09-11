@@ -6,6 +6,9 @@ from visualizer import get_images
 
 
 def compare_histograms(prev: Image, current: Image) -> List:
+    '''
+    calculate histograms for every bbox combination (current -> previous)
+    '''
     prev_hists = prev.get_upper_histograms()
     current_hists = current.get_upper_histograms()
 
