@@ -8,13 +8,14 @@ from distance import calc_dist
 from pgmpy.models import FactorGraph
 from pgmpy.factors.discrete import DiscreteFactor
 from pgmpy.inference.ExactInference import BeliefPropagation
+from itertools import combinations
 
 
 def f_b(prev_bbox_count: int, current_bbox_count: int):
     matrix = []
-    for ver in range(current_bbox_count+1):
+    for ver in range(prev_bbox_count+1):
         row = []
-        for hor in range(current_bbox_count+1):
+        for hor in range(prev_bbox_count+1):
             if ver == hor != 0:
                 row.append(0)
             else:
@@ -52,34 +53,38 @@ def create_graph(f_b, f_u, nodes):
     edges = []
     dfs = []
     print(len(nodes))
-    # print(len(f_u))
+    print(f_u[0])
     # print(f_u)
     for i, node in enumerate(nodes):
-        print(node)
+        # f_u_i = [[0.55], f_u[i]]
         df = DiscreteFactor([node], [len(f_u[0])], f_u[i])
         Graph.add_factors(df)
-
-        dfs.append(df)
-        edges.append([node, df])
+        Graph.add_node(df)
+        Graph.add_edge(node, df)
+        # dfs.append(df)
+        # edges.append([node, df])
 
     for i in range(len(f_b)-1):
         for j in range(len(f_b)-1):
-            if i != j:
+            if (nodes[i], nodes[j]) in list(combinations(nodes, 2)):
                 print(nodes[i], nodes[j])
                 df = DiscreteFactor([nodes[i], nodes[j]], [len(f_b), len(f_b)], f_b)
-
                 Graph.add_factors(df)
+                Graph.add_node(df)
+                Graph.add_edge(nodes[i], df)
 
-                edges.append([nodes[i], df])
-                edges.append([nodes[j], df])
-                dfs.append(df)
+                # edges.append([nodes[i], df])
+                # edges.append([nodes[j], df])
+                # dfs.append(df)
 
-    Graph.add_nodes_from(dfs)
-    print('nodes added')
-    Graph.add_edges_from(edges)
-    print('edges added')
-    Graph.check_model()
+    # print(len(dfs))
+    # Graph.add_nodes_from(dfs)
+    # print('nodes added')
+    # print(len(edges))
+    # Graph.add_edges_from(edges)
+    # print('edges added')
     print(Graph)
+    Graph.check_model()
     # bp = BeliefPropagation(Graph)
 
 
