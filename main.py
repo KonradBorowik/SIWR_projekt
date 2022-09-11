@@ -26,18 +26,21 @@ def f_b(prev_bbox_count: int, current_bbox_count: int):
     return matrix
 
 
-def f_u(hists: List, distances: List):
+def f_u(hists: List, bboxes_count_prev, bboxes_count_curr):
     matrices = []
-    nodes = ['bbox_-1']
+    nodes = []
     print(f'bboxes count = {len(hists)}')
-    obj_prob_matrix = [0.55]
-    for i_ob, object in enumerate(hists): #object_count
+    for i_ob in range(bboxes_count_curr): #object_count
+        obj_prob_matrix = [0.55]
+        # print(i_ob)
         # print(f'object {i_ob}: {object}')
         nodes.append(f'bbox_{i_ob}')
-        for i_bb, hist in enumerate(object): #connection options
-            # print(f'hist {i_ob}: {hist}')
-            obj_prob_matrix.append((hist * 0.5 + distances[i_ob][i_bb] * 0.1) / (0.5 + 0.1))
-    matrices.append(obj_prob_matrix)
+        for i_bb in range(bboxes_count_prev): #connection options
+            #  print(f'hist {i_ob}: {hist}')
+            print(hists[i_ob][i_bb])
+            # print(distances[i_ob][i_bb])
+            obj_prob_matrix.append((hists[i_ob][i_bb] * 0.5) / 0.5)
+        matrices.append(obj_prob_matrix)
     # print(f'f_u: {matrices}')
     return matrices, nodes
 
@@ -51,9 +54,9 @@ def create_graph(f_b, f_u, nodes):
     print(len(nodes))
     # print(len(f_u))
     # print(f_u)
-    for node in nodes:
+    for i, node in enumerate(nodes):
         print(node)
-        df = DiscreteFactor([node], [len(f_u[0])], f_u)
+        df = DiscreteFactor([node], [len(f_u[0])], f_u[i])
         Graph.add_factors(df)
 
         dfs.append(df)
@@ -62,6 +65,7 @@ def create_graph(f_b, f_u, nodes):
     for i in range(len(f_b)-1):
         for j in range(len(f_b)-1):
             if i != j:
+                print(nodes[i], nodes[j])
                 df = DiscreteFactor([nodes[i], nodes[j]], [len(f_b), len(f_b)], f_b)
 
                 Graph.add_factors(df)
@@ -75,7 +79,7 @@ def create_graph(f_b, f_u, nodes):
     Graph.add_edges_from(edges)
     print('edges added')
     Graph.check_model()
-
+    print(Graph)
     # bp = BeliefPropagation(Graph)
 
 
@@ -92,11 +96,13 @@ if __name__ == '__main__':
             print(f'prev bbox count = {images[i-1].bbox_count}')
             print(f'curr bbox count = {image.bbox_count}')
             hists = compare_histograms(images[i-1], image)
-            distances = calc_dist(images[i-1], image)
+            # distances = calc_dist(images[i-1], image)
+            print(hists)
+            # print(distances)
             
             matrix_f_b = f_b(images[i-1].bbox_count, image.bbox_count)
             print(f'f_b: {matrix_f_b}')
-            matrices_f_u, nodes_names = f_u(hists, distances)
+            matrices_f_u, nodes_names = f_u(hists, images[i-1].bbox_count, image.bbox_count)
             print(f'f_u: {matrices_f_u}')
             print(nodes_names)
 
