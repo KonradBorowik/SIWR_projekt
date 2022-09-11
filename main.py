@@ -7,6 +7,7 @@ from histograms import compare_histograms
 from distance import calc_dist
 from pgmpy.models import FactorGraph
 from pgmpy.factors.discrete import DiscreteFactor
+from pgmpy.inference.ExactInference import BeliefPropagation
 
 
 def f_b(prev_bbox_count: int, current_bbox_count: int):
@@ -27,16 +28,16 @@ def f_b(prev_bbox_count: int, current_bbox_count: int):
 
 def f_u(hists: List, distances: List):
     matrices = []
-    nodes = []
+    nodes = ['bbox_-1']
     print(f'bboxes count = {len(hists)}')
+    obj_prob_matrix = [0.55]
     for i_ob, object in enumerate(hists): #object_count
         # print(f'object {i_ob}: {object}')
         nodes.append(f'bbox_{i_ob}')
-        obj_prob_matrix = [0.55]
         for i_bb, hist in enumerate(object): #connection options
             # print(f'hist {i_ob}: {hist}')
             obj_prob_matrix.append((hist * 0.5 + distances[i_ob][i_bb] * 0.1) / (0.5 + 0.1))
-        matrices.append(obj_prob_matrix)
+    matrices.append(obj_prob_matrix)
     # print(f'f_u: {matrices}')
     return matrices, nodes
 
@@ -47,18 +48,19 @@ def create_graph(f_b, f_u, nodes):
 
     edges = []
     dfs = []
-    # print(len(nodes))
+    print(len(nodes))
     # print(len(f_u))
     # print(f_u)
-    for i, node in enumerate(nodes):
-        df = DiscreteFactor([node], [len(f_u[i])], f_u[i])
+    for node in nodes:
+        print(node)
+        df = DiscreteFactor([node], [len(f_u[0])], f_u)
         Graph.add_factors(df)
 
         dfs.append(df)
         edges.append([node, df])
 
     for i in range(len(f_b)-1):
-        for j in range(i):
+        for j in range(len(f_b)-1):
             if i != j:
                 df = DiscreteFactor([nodes[i], nodes[j]], [len(f_b), len(f_b)], f_b)
 
@@ -69,6 +71,12 @@ def create_graph(f_b, f_u, nodes):
                 dfs.append(df)
 
     Graph.add_nodes_from(dfs)
+    print('nodes added')
+    Graph.add_edges_from(edges)
+    print('edges added')
+    Graph.check_model()
+
+    # bp = BeliefPropagation(Graph)
 
 
 if __name__ == '__main__':
