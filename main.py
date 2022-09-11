@@ -47,13 +47,28 @@ def create_graph(f_b, f_u, nodes):
 
     edges = []
     dfs = []
-    print(len(nodes))
-    print(len(f_u))
-    print(f_u)
+    # print(len(nodes))
+    # print(len(f_u))
+    # print(f_u)
     for i, node in enumerate(nodes):
         df = DiscreteFactor([node], [len(f_u[i])], f_u[i])
+        Graph.add_factors(df)
 
-    Graph.add_factors(df)
+        dfs.append(df)
+        edges.append([node, df])
+
+    for i in range(len(f_b)-1):
+        for j in range(i):
+            if i != j:
+                df = DiscreteFactor([nodes[i], nodes[j]], [len(f_b), len(f_b)], f_b)
+
+                Graph.add_factors(df)
+
+                edges.append([nodes[i], df])
+                edges.append([nodes[j], df])
+                dfs.append(df)
+
+    Graph.add_nodes_from(dfs)
 
 
 if __name__ == '__main__':
@@ -70,7 +85,7 @@ if __name__ == '__main__':
             print(f'curr bbox count = {image.bbox_count}')
             hists = compare_histograms(images[i-1], image)
             distances = calc_dist(images[i-1], image)
-            print(hists)
+            
             matrix_f_b = f_b(images[i-1].bbox_count, image.bbox_count)
             print(f'f_b: {matrix_f_b}')
             matrices_f_u, nodes_names = f_u(hists, distances)
