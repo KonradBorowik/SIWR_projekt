@@ -30,7 +30,6 @@ def f_b(prev_bbox_count: int, current_bbox_count: int):
 def f_u(hists: List, bboxes_count_prev, bboxes_count_curr):
     matrices = []
     nodes = []
-    print(f'bboxes count = {len(hists)}')
     for i_ob in range(bboxes_count_curr): #object_count
         obj_prob_matrix = [0.55]
         # print(i_ob)
@@ -38,7 +37,7 @@ def f_u(hists: List, bboxes_count_prev, bboxes_count_curr):
         nodes.append(f'bbox_{i_ob}')
         for i_bb in range(bboxes_count_prev): #connection options
             #  print(f'hist {i_ob}: {hist}')
-            print(hists[i_ob][i_bb])
+            # print(hists[i_ob][i_bb])
             # print(distances[i_ob][i_bb])
             obj_prob_matrix.append(hists[i_ob][i_bb] *10)
         matrices.append(obj_prob_matrix)
@@ -72,7 +71,21 @@ def create_graph(f_b, f_u, nodes, curr_bbox_count):
     bp = BeliefPropagation(Graph)
     bp.calibrate()
     values = bp.map_query(Graph.get_variable_nodes(), show_progress=False)
-    print(values)
+    
+    return values
+
+
+def printing_outcome(values, nodes):
+    outcome = []
+    for node in nodes:
+        bbox_number = values[node]
+        outcome.append(bbox_number - 1)
+    
+    string = ''
+    for out in outcome:
+        string += str(out) + ' '
+
+    print(string[:-1])
 
 
 if __name__ == '__main__':
@@ -81,24 +94,23 @@ if __name__ == '__main__':
         hists = []
         distances = []
         if i > 0:
-            print(f'pair {i}')
-            if images[i-1].bbox_count == 0 or image.bbox_count == 0:
+            # print(f'pair {i}')
+            if image.bbox_count == 0:
                 print()
                 continue
-            print(f'prev bbox count = {images[i-1].bbox_count}')
-            print(f'curr bbox count = {image.bbox_count}')
+            # print(f'prev bbox count = {images[i-1].bbox_count}')
+            # print(f'curr bbox count = {image.bbox_count}')
             hists = compare_histograms(images[i-1], image)
             # distances = calc_dist(images[i-1], image)
-            print(hists)
+            # print(hists)
             # print(distances)
             
             matrix_f_b = f_b(images[i-1].bbox_count, image.bbox_count)
             # print(f'f_b: {matrix_f_b}')
             matrices_f_u, nodes_names = f_u(hists, images[i-1].bbox_count, image.bbox_count)
             # print(f'f_u: {matrices_f_u}')
-            print(nodes_names)
+            # print(nodes_names)
 
-            create_graph(matrix_f_b, matrices_f_u, nodes_names, image.bbox_count)
-            print('----')
-            if i == 3:
-                break
+            outcome = create_graph(matrix_f_b, matrices_f_u, nodes_names, image.bbox_count)
+
+            printing_outcome(outcome, nodes_names)
