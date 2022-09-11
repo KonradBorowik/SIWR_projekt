@@ -48,6 +48,7 @@ def f_u(hists: List, bboxes_count_prev, bboxes_count_curr):
 
 def create_graph(f_b, f_u, nodes, curr_bbox_count):
     Graph = FactorGraph()
+    Graph.add_nodes_from(nodes)
 
     print(len(nodes))
     print(f_u[0])
@@ -57,17 +58,14 @@ def create_graph(f_b, f_u, nodes, curr_bbox_count):
         Graph.add_factors(df)
         Graph.add_node(df)
         Graph.add_edge(node, df)
-
+    combs = [x for x in combinations(nodes, 2)]
     if curr_bbox_count > 1:
-        for i in range(len(f_b)-1):
-            for j in range(len(f_b)-1):
-                if (nodes[i], nodes[j]) in list(combinations(nodes, 2)):
-                    print(nodes[i], nodes[j])
-                    df = DiscreteFactor([nodes[i], nodes[j]], [len(f_b), len(f_b)], f_b)
-                    Graph.add_factors(df)
-                    Graph.add_node(df)
-                    Graph.add_edge(nodes[i], df)
-                    Graph.add_edge(nodes[j], df)
+        for i in range(len(combs)):
+            df = DiscreteFactor([combs[i][0], combs[i][1]], [len(f_b), len(f_b)], f_b)
+            Graph.add_factors(df)
+            Graph.add_node(df)
+            Graph.add_edge(combs[i][0], df)
+            Graph.add_edge(combs[i][1], df)
 
     print(Graph)
     Graph.check_model()
