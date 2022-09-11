@@ -48,21 +48,15 @@ def f_u(hists: List, bboxes_count_prev, bboxes_count_curr):
 
 def create_graph(f_b, f_u, nodes, curr_bbox_count):
     Graph = FactorGraph()
-    Graph.add_nodes_from(nodes)
 
-    edges = []
-    dfs = []
     print(len(nodes))
     print(f_u[0])
     # print(f_u)
     for i, node in enumerate(nodes):
-        # f_u_i = [[0.55], f_u[i]]
         df = DiscreteFactor([node], [len(f_u[0])], f_u[i])
         Graph.add_factors(df)
         Graph.add_node(df)
         Graph.add_edge(node, df)
-        # dfs.append(df)
-        # edges.append([node, df])
 
     if curr_bbox_count > 1:
         for i in range(len(f_b)-1):
@@ -73,20 +67,11 @@ def create_graph(f_b, f_u, nodes, curr_bbox_count):
                     Graph.add_factors(df)
                     Graph.add_node(df)
                     Graph.add_edge(nodes[i], df)
+                    Graph.add_edge(nodes[j], df)
 
-                    # edges.append([nodes[i], df])
-                    # edges.append([nodes[j], df])
-                    # dfs.append(df)
-
-    # print(len(dfs))
-    # Graph.add_nodes_from(dfs)
-    # print('nodes added')
-    # print(len(edges))
-    # Graph.add_edges_from(edges)
-    # print('edges added')
     print(Graph)
     Graph.check_model()
-    # bp = BeliefPropagation(Graph)
+    bp = BeliefPropagation(Graph)
 
 
 if __name__ == '__main__':
