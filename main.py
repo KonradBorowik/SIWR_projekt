@@ -40,7 +40,7 @@ def f_u(hists: List, bboxes_count_prev, bboxes_count_curr):
             #  print(f'hist {i_ob}: {hist}')
             print(hists[i_ob][i_bb])
             # print(distances[i_ob][i_bb])
-            obj_prob_matrix.append((hists[i_ob][i_bb] * 0.5) / 0.5)
+            obj_prob_matrix.append(hists[i_ob][i_bb] *10)
         matrices.append(obj_prob_matrix)
     # print(f'f_u: {matrices}')
     return matrices, nodes
@@ -50,8 +50,8 @@ def create_graph(f_b, f_u, nodes, curr_bbox_count):
     Graph = FactorGraph()
     Graph.add_nodes_from(nodes)
 
-    print(len(nodes))
-    print(f_u[0])
+    # print(len(nodes))
+    # print(f_u[0])
     # print(f_u)
     for i, node in enumerate(nodes):
         df = DiscreteFactor([node], [len(f_u[0])], f_u[i])
@@ -67,9 +67,12 @@ def create_graph(f_b, f_u, nodes, curr_bbox_count):
             Graph.add_edge(combs[i][0], df)
             Graph.add_edge(combs[i][1], df)
 
-    print(Graph)
+    # print(Graph)
     Graph.check_model()
     bp = BeliefPropagation(Graph)
+    bp.calibrate()
+    values = bp.map_query(Graph.get_variable_nodes(), show_progress=False)
+    print(values)
 
 
 if __name__ == '__main__':
@@ -90,9 +93,9 @@ if __name__ == '__main__':
             # print(distances)
             
             matrix_f_b = f_b(images[i-1].bbox_count, image.bbox_count)
-            print(f'f_b: {matrix_f_b}')
+            # print(f'f_b: {matrix_f_b}')
             matrices_f_u, nodes_names = f_u(hists, images[i-1].bbox_count, image.bbox_count)
-            print(f'f_u: {matrices_f_u}')
+            # print(f'f_u: {matrices_f_u}')
             print(nodes_names)
 
             create_graph(matrix_f_b, matrices_f_u, nodes_names, image.bbox_count)
