@@ -46,7 +46,7 @@ def f_u(hists: List, bboxes_count_prev, bboxes_count_curr):
     return matrices, nodes
 
 
-def create_graph(f_b, f_u, nodes):
+def create_graph(f_b, f_u, nodes, curr_bbox_count):
     Graph = FactorGraph()
     Graph.add_nodes_from(nodes)
 
@@ -64,18 +64,19 @@ def create_graph(f_b, f_u, nodes):
         # dfs.append(df)
         # edges.append([node, df])
 
-    for i in range(len(f_b)-1):
-        for j in range(len(f_b)-1):
-            if (nodes[i], nodes[j]) in list(combinations(nodes, 2)):
-                print(nodes[i], nodes[j])
-                df = DiscreteFactor([nodes[i], nodes[j]], [len(f_b), len(f_b)], f_b)
-                Graph.add_factors(df)
-                Graph.add_node(df)
-                Graph.add_edge(nodes[i], df)
+    if curr_bbox_count > 1:
+        for i in range(len(f_b)-1):
+            for j in range(len(f_b)-1):
+                if (nodes[i], nodes[j]) in list(combinations(nodes, 2)):
+                    print(nodes[i], nodes[j])
+                    df = DiscreteFactor([nodes[i], nodes[j]], [len(f_b), len(f_b)], f_b)
+                    Graph.add_factors(df)
+                    Graph.add_node(df)
+                    Graph.add_edge(nodes[i], df)
 
-                # edges.append([nodes[i], df])
-                # edges.append([nodes[j], df])
-                # dfs.append(df)
+                    # edges.append([nodes[i], df])
+                    # edges.append([nodes[j], df])
+                    # dfs.append(df)
 
     # print(len(dfs))
     # Graph.add_nodes_from(dfs)
@@ -111,7 +112,7 @@ if __name__ == '__main__':
             print(f'f_u: {matrices_f_u}')
             print(nodes_names)
 
-            create_graph(matrix_f_b, matrices_f_u, nodes_names)
+            create_graph(matrix_f_b, matrices_f_u, nodes_names, image.bbox_count)
             print('----')
             if i == 3:
                 break
