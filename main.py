@@ -88,7 +88,7 @@ def printing_outcome(values, nodes):
     print(string[:-1])
 
 
-if __name__ == '__main__':
+def main():
     # get path to read imnages from
     parser = argparse.ArgumentParser()
     parser.add_argument('images_dir', type=str)
@@ -122,3 +122,6 @@ if __name__ == '__main__':
                 outcome = create_graph(matrix_f_b, matrices_f_u, nodes_names, image.bbox_count)
                 #print result
                 printing_outcome(outcome, nodes_names)
+
+if __name__ == '__main__':
+    main()
